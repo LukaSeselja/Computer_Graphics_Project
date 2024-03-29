@@ -12,7 +12,9 @@ enum Direction {
     FORWARD,
     BACKWARD,
     LEFT,
-    RIGHT
+    RIGHT,
+    UP,
+    DOWN
 };
 
 class Camera {
@@ -27,10 +29,10 @@ class Camera {
     }
 public:
     float Zoom = 45.f;
-    float MovementSpeed = 2.5f;
+    float MovementSpeed = 6.0f;
     float Yaw = -90.0f;
     float Pitch = 0.0f;
-    float MouseSensitivity = 0.1f;
+    float MouseSensitivity = 0.3f;
 
     glm::vec3 Position = glm::vec3(0.0f);
     glm::vec3 WorldUp;
@@ -61,6 +63,12 @@ public:
            case RIGHT: {
                 Position += Right * velocity;
            }break;
+           case UP: {
+               Position += Up * velocity;
+           } break;
+           case DOWN: {
+               Position -= Up * velocity;
+           } break;
        }
     }
 
