@@ -51,6 +51,14 @@ struct PointLight {
     float quadratic;
 };
 
+struct DirLight {
+    glm::vec3 direction;
+
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+};
+
 struct ProgramState {
     glm::vec3 clearColor = glm::vec3(0);
     bool ImGuiEnabled = false;
@@ -172,7 +180,7 @@ int main() {
 
     PointLight& pointLight = programState->pointLight;
     pointLight.position = glm::vec3(4.0f, 4.0, 0.0);
-    pointLight.ambient = glm::vec3(6.0, 6.0, 6.0);
+    pointLight.ambient = glm::vec3(0.0, 0.0, 0.0);
     pointLight.diffuse = glm::vec3(0.6, 0.6, 0.6);
     pointLight.specular = glm::vec3(1.0, 1.0, 1.0);
 
@@ -180,7 +188,12 @@ int main() {
     pointLight.linear = 0.09f;
     pointLight.quadratic = 0.032f;
 
+    DirLight dirLight;
 
+    dirLight.direction = glm::vec3(-0.2f, -0.1f, -0.3f);
+    dirLight.ambient = glm::vec3(0.5f, 0.5f, 0.5f);
+    dirLight.diffuse = glm::vec3(0.4f, 0.4f, 0.4f);
+    dirLight.specular = glm::vec3(0.5f, 0.5f, 0.5f);
 
     // draw in wireframe
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -215,6 +228,10 @@ int main() {
         ourShader.setFloat("pointLight.linear", pointLight.linear);
         ourShader.setFloat("pointLight.quadratic", pointLight.quadratic);
         ourShader.setVec3("viewPosition", programState->camera.Position);
+        ourShader.setVec3("dirLight.direction", dirLight.direction);
+        ourShader.setVec3("dirLight.ambient", dirLight.ambient);
+        ourShader.setVec3("dirLight.diffuse", dirLight.diffuse);
+        ourShader.setVec3("dirLight.specular", dirLight.specular);
         ourShader.setFloat("material.shininess", 32.0f);
         // view/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),
