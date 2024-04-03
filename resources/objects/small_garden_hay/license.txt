@@ -1,0 +1,11 @@
+Model Information:
+* title:	Small garden hay
+* source:	https://sketchfab.com/3d-models/small-garden-hay-8b2d1fb61a9f4197ab4f90e08d3a90cf
+* author:	axonite (https://sketchfab.com/axonite)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Small garden hay" (https://sketchfab.com/3d-models/small-garden-hay-8b2d1fb61a9f4197ab4f90e08d3a90cf) by axonite (https://sketchfab.com/axonite) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

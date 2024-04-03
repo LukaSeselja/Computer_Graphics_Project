@@ -68,7 +68,26 @@ struct ProgramState {
     bool CameraMouseMovementUpdateEnabled = true;
 
     glm::vec3 fieldPosition = glm::vec3(0.0f);
-    float fieldScale = 0.2f;
+    float fieldScale = 0.4f;
+
+    glm::vec3 cornPosition = glm::vec3(7.4f, 2.64f, -19.2f);
+    float cornScale = 0.04f;
+
+    glm::vec3 hayPosition = glm::vec3(22.0f, 1.2f, -0.8f);
+    float hayScale = 0.005f;
+
+    glm::vec3 hay2Position = glm::vec3(22.5f, 1.0f, -1.1f);
+
+    glm::vec3 hay3Position = glm::vec3(22.75f, 1.0f, -2.8f);
+
+    glm::vec3 tractorPosition = glm::vec3(22.0f, 0.9f, -11.0f);
+    float tractorScale = 0.5f;
+
+    glm::vec3 cabinPosition = glm::vec3(11.0f, 3.33f, -7.5f);
+    float cabinScale = 5.0f;
+
+    glm::vec3 hayPilePosition = glm::vec3(23.5f, 1.26f, -2.0f);
+    float hayPileScale = 0.18f;
 
     PointLight pointLight;
     ProgramState()
@@ -223,8 +242,29 @@ int main() {
 
     // load models
     // -----------
-    Model fieldModel("resources/objects/3d_field_inspection/scene.gltf");
+//    Model fieldModel("resources/objects/3d_field_inspection/scene.gltf");
+    Model fieldModel("resources/objects/field_and_garden/scene.gltf");
     fieldModel.SetShaderTextureNamePrefix("material.");
+
+    // corn model
+    Model cornModel("resources/objects/corn_corn_corn/scene.gltf");
+    cornModel.SetShaderTextureNamePrefix("material.");
+
+    // hay bale model
+    Model hayModel("resources/objects/hay_bale/scene.gltf");
+    hayModel.SetShaderTextureNamePrefix("material.");
+
+    // tractor model
+    Model tractorModel("resources/objects/New_holland_T7_Tractor_SF/New_holland_T7_Tractor_SF.obj");
+    tractorModel.SetShaderTextureNamePrefix("material.");
+
+    // cabin model
+    Model cabinModel("resources/objects/barn/scene.gltf");
+    cabinModel.SetShaderTextureNamePrefix("material.");
+
+    // hay pile model
+    Model hayPileModel("resources/objects/small_garden_hay/scene.gltf");
+    hayPileModel.SetShaderTextureNamePrefix("material.");
 
     PointLight& pointLight = programState->pointLight;
     pointLight.position = glm::vec3(4.0f, 4.0, 0.0);
@@ -239,9 +279,9 @@ int main() {
     DirLight dirLight;
 
     dirLight.direction = glm::vec3(-0.2f, -0.1f, -0.3f);
-    dirLight.ambient = glm::vec3(0.5f, 0.5f, 0.5f);
-    dirLight.diffuse = glm::vec3(0.4f, 0.4f, 0.4f);
-    dirLight.specular = glm::vec3(0.5f, 0.5f, 0.5f);
+    dirLight.ambient = glm::vec3(0.3f);
+    dirLight.diffuse = glm::vec3(0.4f);
+    dirLight.specular = glm::vec3(0.5f);
 
     // skybox VAO
     unsigned int skyboxVAO, skyboxVBO;
@@ -315,13 +355,71 @@ int main() {
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
 
-        // render the loaded model
+        // render the loaded models
+        // field
         glm::mat4 field = glm::mat4(1.0f);
         field = glm::translate(field, programState->fieldPosition); // translate it down so it's at the center of the scene
         field = glm::scale(field, glm::vec3(programState->fieldScale));    // it's a bit too big for our scene, so scale it down
-        field = glm::rotate(field, glm::radians(275.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        field = glm::rotate(field, glm::radians(272.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         ourShader.setMat4("model", field);
         fieldModel.Draw(ourShader);
+
+        // corn corn corn
+        glm::mat4 corn = glm::mat4(1.0f);
+        corn = glm::translate(corn, programState->cornPosition);
+        corn = glm::scale(corn, glm::vec3(programState->cornScale));
+        corn = glm::rotate(corn, glm::radians(275.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", corn);
+        cornModel.Draw(ourShader);
+
+        // hay bale
+        glm::mat4 hay = glm::mat4(1.0f);
+        hay = glm::translate(hay, programState->hayPosition);
+        hay = glm::scale(hay, glm::vec3(programState->hayScale));
+        hay = glm::rotate(hay, glm::radians(60.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        hay = glm::rotate(hay, glm::radians(-30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", hay);
+        hayModel.Draw(ourShader);
+
+        glm::mat4 hay2 = glm::mat4(1.0f);
+        hay2 = glm::translate(hay2, programState->hay2Position);
+        hay2 = glm::scale(hay2, glm::vec3(programState->hayScale));
+        hay2 = glm::rotate(hay2, glm::radians(33.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", hay2);
+        hayModel.Draw(ourShader);
+
+        glm::mat4 hay3 = glm::mat4(1.0f);
+        hay3 = glm::translate(hay3, programState->hay3Position);
+        hay3 = glm::scale(hay3, glm::vec3(programState->hayScale));
+        hay3 = glm::rotate(hay3, glm::radians(-37.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", hay3);
+        hayModel.Draw(ourShader);
+
+        // tractor
+        glm::mat4 tractor = glm::mat4(1.0f);
+        tractor = glm::translate(tractor, programState->tractorPosition);
+        tractor = glm::scale(tractor, glm::vec3(programState->tractorScale));
+        tractor = glm::rotate(tractor, glm::radians(-6.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", tractor);
+        tractorModel.Draw(ourShader);
+
+        // barn
+        glm::mat4 cabin = glm::mat4(1.0f);
+        cabin = glm::translate(cabin, programState->cabinPosition);
+        cabin = glm::scale(cabin, glm::vec3(programState->cabinScale));
+        cabin = glm::rotate(cabin, glm::radians(85.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", cabin);
+        cabinModel.Draw(ourShader);
+
+        // hay pile
+        glm::mat4 hayPile = glm::mat4(1.0f);
+        hayPile = glm::translate(hayPile, programState->hayPilePosition);
+        hayPile = glm::scale(hayPile, glm::vec3(programState->hayPileScale));
+        hayPile = glm::rotate(hayPile, glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        hayPile = glm::rotate(hayPile, glm::radians(-10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+//        hayPile = glm::rotate(hayPile, glm::radians(25.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        ourShader.setMat4("model", hayPile);
+        hayPileModel.Draw(ourShader);
 
         // draw skybox
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
