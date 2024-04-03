@@ -144,6 +144,9 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
+    // MSAA
+    glfwWindowHint(GLFW_SAMPLES, 4);
+
     // glfw window creation
     // --------------------
     GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
@@ -189,6 +192,7 @@ int main() {
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_MULTISAMPLE);
 
     // build and compile shaders
     // -------------------------
@@ -417,7 +421,6 @@ int main() {
         hayPile = glm::scale(hayPile, glm::vec3(programState->hayPileScale));
         hayPile = glm::rotate(hayPile, glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         hayPile = glm::rotate(hayPile, glm::radians(-10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-//        hayPile = glm::rotate(hayPile, glm::radians(25.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         ourShader.setMat4("model", hayPile);
         hayPileModel.Draw(ourShader);
 
