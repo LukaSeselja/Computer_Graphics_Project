@@ -196,7 +196,7 @@ int main() {
 
     // build and compile shaders
     // -------------------------
-    Shader ourShader("resources/shaders/2.model_lighting.vs", "resources/shaders/2.model_lighting.fs");
+    Shader ourShader("resources/shaders/model_lighting.vs", "resources/shaders/model_lighting.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
 
     float skyboxVertices[] = {
@@ -369,12 +369,20 @@ int main() {
         fieldModel.Draw(ourShader);
 
         // corn corn corn
-        glm::mat4 corn = glm::mat4(1.0f);
-        corn = glm::translate(corn, programState->cornPosition);
-        corn = glm::scale(corn, glm::vec3(programState->cornScale));
-        corn = glm::rotate(corn, glm::radians(275.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", corn);
-        cornModel.Draw(ourShader);
+        float zRowCoord = 0.0f;
+        float yRowCoord = 0.0f;
+        for (int i = 0; i < 9; ++i) {
+            for (int j = 0; j < 30; ++j) {
+                glm::mat4 corn = glm::mat4(1.0f);
+                corn = glm::translate(corn, programState->cornPosition + glm::vec3(float(j), yRowCoord, zRowCoord + j * 0.082f));
+                corn = glm::scale(corn, glm::vec3(programState->cornScale));
+                corn = glm::rotate(corn, glm::radians(275.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+                ourShader.setMat4("model", corn);
+                cornModel.Draw(ourShader);
+            }
+            zRowCoord -= 1.3f;
+            yRowCoord += 0.02f;
+        }
 
         // hay bale
         glm::mat4 hay = glm::mat4(1.0f);
