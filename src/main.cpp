@@ -83,11 +83,36 @@ struct ProgramState {
     glm::vec3 tractorPosition = glm::vec3(22.0f, 0.9f, -11.0f);
     float tractorScale = 0.5f;
 
-    glm::vec3 cabinPosition = glm::vec3(11.0f, 3.33f, -7.5f);
+    glm::vec3 cabinPosition = glm::vec3(11.0f, 3.33f, -7.0f);
     float cabinScale = 5.0f;
 
     glm::vec3 hayPilePosition = glm::vec3(23.5f, 1.26f, -2.0f);
     float hayPileScale = 0.18f;
+
+    glm::vec3 fencePosition = glm::vec3(12.5f, 1.05f, -15.3f);
+    float fenceScale = 0.5f;
+
+    glm::vec3 fence2Position = glm::vec3(10.55f, 1.05f, -15.4f);
+
+    glm::vec3 fence3Position = glm::vec3(8.6f, 1.05f, -15.48f);
+
+    glm::vec3 fence4Position = glm::vec3(6.03f, 1.05f, -14.61f);
+
+    glm::vec3 fence5Position = glm::vec3(5.97f, 1.05f, -13.62f);
+
+    glm::vec3 fence6Position = glm::vec3(8.44f, 1.05f, -12.5f);
+
+    glm::vec3 fence7Position = glm::vec3(10.4f, 1.05f, -12.4f);
+
+    glm::vec3 fence8Position = glm::vec3(12.35f, 1.05f, -12.3f);
+
+    glm::vec3 fence9Position = glm::vec3(11.85f, 1.05f, -13.32f);
+
+    glm::vec3 gatePosition = glm::vec3(12.7f, 1.0f, -14.93f);
+    float gateScale = 0.21f;
+
+    glm::vec3 waterBowlPosition = glm::vec3(8.0f, 1.14f, -15.8f);
+    float waterBowlScale = 0.6f;
 
     PointLight pointLight;
     ProgramState()
@@ -270,6 +295,18 @@ int main() {
     Model hayPileModel("resources/objects/small_garden_hay/scene.gltf");
     hayPileModel.SetShaderTextureNamePrefix("material.");
 
+    // fence model
+    Model fenceModel("resources/objects/fence_wood/scene.gltf");
+    fenceModel.SetShaderTextureNamePrefix("material.");
+
+    // gate model
+    Model gateModel("resources/objects/gate_wood/scene.gltf");
+    gateModel.SetShaderTextureNamePrefix("material.");
+
+    // water bowl model
+    Model waterBowlModel("resources/objects/water_bowl/scene.gltf");
+    waterBowlModel.SetShaderTextureNamePrefix("material.");
+
     PointLight& pointLight = programState->pointLight;
     pointLight.position = glm::vec3(4.0f, 4.0, 0.0);
     pointLight.ambient = glm::vec3(0.0, 0.0, 0.0);
@@ -431,6 +468,97 @@ int main() {
         hayPile = glm::rotate(hayPile, glm::radians(-10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         ourShader.setMat4("model", hayPile);
         hayPileModel.Draw(ourShader);
+
+        // fences
+        glm::mat4 fence = glm::mat4(1.0f);
+        fence = glm::translate(fence, programState->fencePosition);
+        fence = glm::scale(fence, glm::vec3(programState->fenceScale));
+        fence = glm::rotate(fence, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        fence = glm::rotate(fence, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", fence);
+        fenceModel.Draw(ourShader);
+
+        glm::mat4 fence2 = glm::mat4(1.0f);
+        fence2 = glm::translate(fence2, programState->fence2Position);
+        fence2 = glm::scale(fence2, glm::vec3(programState->fenceScale));
+        fence2 = glm::rotate(fence2, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        fence2 = glm::rotate(fence2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", fence2);
+        fenceModel.Draw(ourShader);
+
+        glm::mat4 fence3 = glm::mat4(1.0f);
+        fence3 = glm::translate(fence3, programState->fence3Position);
+        fence3 = glm::scale(fence3, glm::vec3(programState->fenceScale));
+        fence3 = glm::rotate(fence3, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        fence3 = glm::rotate(fence3, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", fence3);
+        fenceModel.Draw(ourShader);
+
+        glm::mat4 fence4 = glm::mat4(1.0f);
+        fence4 = glm::translate(fence4, programState->fence4Position);
+        fence4 = glm::scale(fence4, glm::vec3(programState->fenceScale));
+        fence4 = glm::rotate(fence4, glm::radians(-25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        fence4 = glm::rotate(fence4, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", fence4);
+        fenceModel.Draw(ourShader);
+
+        glm::mat4 fence5 = glm::mat4(1.0f);
+        fence5 = glm::translate(fence5, programState->fence5Position);
+        fence5 = glm::scale(fence5, glm::vec3(programState->fenceScale));
+        fence5 = glm::rotate(fence5, glm::radians(-25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        fence5 = glm::rotate(fence5, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", fence5);
+        fenceModel.Draw(ourShader);
+
+        glm::mat4 fence6 = glm::mat4(1.0f);
+        fence6 = glm::translate(fence6, programState->fence6Position);
+        fence6 = glm::scale(fence6, glm::vec3(programState->fenceScale));
+        fence6 = glm::rotate(fence6, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        fence6 = glm::rotate(fence6, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", fence6);
+        fenceModel.Draw(ourShader);
+
+        glm::mat4 fence7 = glm::mat4(1.0f);
+        fence7 = glm::translate(fence7, programState->fence7Position);
+        fence7 = glm::scale(fence7, glm::vec3(programState->fenceScale));
+        fence7 = glm::rotate(fence7, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        fence7 = glm::rotate(fence7, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", fence7);
+        fenceModel.Draw(ourShader);
+
+        glm::mat4 fence8 = glm::mat4(1.0f);
+        fence8 = glm::translate(fence8, programState->fence8Position);
+        fence8 = glm::scale(fence8, glm::vec3(programState->fenceScale));
+        fence8 = glm::rotate(fence8, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        fence8 = glm::rotate(fence8, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", fence8);
+        fenceModel.Draw(ourShader);
+
+        glm::mat4 fence9 = glm::mat4(1.0f);
+        fence9 = glm::translate(fence9, programState->fence9Position);
+        fence9 = glm::scale(fence9, glm::vec3(programState->fenceScale));
+        fence9 = glm::rotate(fence9, glm::radians(-25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        fence9 = glm::rotate(fence9, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", fence9);
+        fenceModel.Draw(ourShader);
+
+        // gate
+        glm::mat4 gate = glm::mat4(1.0f);
+        gate = glm::translate(gate, programState->gatePosition);
+        gate = glm::scale(gate, glm::vec3(programState->gateScale));
+        gate = glm::rotate(gate, glm::radians(-2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        gate = glm::rotate(gate, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", gate);
+        gateModel.Draw(ourShader);
+
+        // water bowl
+        glm::mat4 waterBowl = glm::mat4(1.0f);
+        waterBowl = glm::translate(waterBowl, programState->waterBowlPosition);
+        waterBowl = glm::scale(waterBowl, glm::vec3(programState->waterBowlScale));
+        waterBowl = glm::rotate(waterBowl, glm::radians(-93.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        waterBowl = glm::rotate(waterBowl, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", waterBowl);
+        waterBowlModel.Draw(ourShader);
 
         // draw skybox
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
