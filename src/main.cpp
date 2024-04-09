@@ -27,6 +27,7 @@ void processInput(GLFWwindow *window);
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 
 unsigned int loadCubemap(vector<std::string> faces);
+unsigned int loadTexture(const char *path);
 
 // settings
 const unsigned int SCR_WIDTH = 1920;
@@ -108,11 +109,16 @@ struct ProgramState {
 
     glm::vec3 fence9Position = glm::vec3(11.85f, 1.05f, -13.32f);
 
-    glm::vec3 gatePosition = glm::vec3(12.7f, 1.0f, -14.93f);
+    glm::vec3 gatePosition = glm::vec3(12.7f, 1.1f, -14.93f);
     float gateScale = 0.21f;
 
     glm::vec3 waterBowlPosition = glm::vec3(8.0f, 1.14f, -15.8f);
     float waterBowlScale = 0.6f;
+
+    glm::vec3 sheepPosition = glm::vec3(7.8f, 1.0f, -14.9f);
+    float sheepScale = 0.8f;
+
+    glm::vec3 sheep2Position = glm::vec3(11.0f, 1.05f, -14.5f);
 
     PointLight pointLight;
     ProgramState()
@@ -223,6 +229,7 @@ int main() {
     // -------------------------
     Shader ourShader("resources/shaders/model_lighting.vs", "resources/shaders/model_lighting.fs");
     Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
+    Shader blendingShader("resources/shaders/blending.vs", "resources/shaders/blending.fs");
 
     float skyboxVertices[] = {
             // positions
@@ -269,9 +276,19 @@ int main() {
             1.0f, -1.0f,  1.0f
     };
 
+    float transparentVertices[] = {
+            // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+            0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+            0.0f, -0.5f, 0.0f, 0.0f, 1.0f,
+            1.0f, -0.5f, 0.0f, 1.0f, 1.0f,
+
+            0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+            1.0f, -0.5f, 0.0f, 1.0f, 1.0f,
+            1.0f, 0.5f, 0.0f, 1.0f, 0.0f
+    };
+
     // load models
     // -----------
-//    Model fieldModel("resources/objects/3d_field_inspection/scene.gltf");
     Model fieldModel("resources/objects/field_and_garden/scene.gltf");
     fieldModel.SetShaderTextureNamePrefix("material.");
 
@@ -307,6 +324,10 @@ int main() {
     Model waterBowlModel("resources/objects/water_bowl/scene.gltf");
     waterBowlModel.SetShaderTextureNamePrefix("material.");
 
+    // sheep model
+    Model sheepModel("resources/objects/sheep/scene.gltf");
+    sheepModel.SetShaderTextureNamePrefix("material.");
+
     PointLight& pointLight = programState->pointLight;
     pointLight.position = glm::vec3(4.0f, 4.0, 0.0);
     pointLight.ambient = glm::vec3(0.0, 0.0, 0.0);
@@ -333,6 +354,21 @@ int main() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // grass VAO
+    unsigned int transparentVAO, transparentVBO;
+    glGenVertexArrays(1, &transparentVAO);
+    glGenBuffers(1, &transparentVBO);
+    glBindVertexArray(transparentVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, transparentVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(transparentVertices), transparentVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glBindVertexArray(0);
+
+    // load texture
+    unsigned int transparentTexture = loadTexture(FileSystem::getPath("resources/textures/grass.png").c_str());
 
     // skybox textures
     stbi_set_flip_vertically_on_load(false);
@@ -347,9 +383,37 @@ int main() {
             };
     unsigned int cubemapTexture = loadCubemap(faces);
 
+    vector<glm::vec3> vegetation
+            {
+                    glm::vec3(12.3f, 1.23f, -13.35f),
+                    glm::vec3(12.1f, 1.23f, -13.36f),
+                    glm::vec3(11.9f, 1.23f, -13.37f),
+                    glm::vec3(11.7f, 1.23f, -13.38f),
+                    glm::vec3(11.5f, 1.23f, -13.39f),
+                    glm::vec3(11.3f, 1.23f, -13.4f),
+                    glm::vec3(11.1f, 1.23f, -13.41f),
+                    glm::vec3(10.9f, 1.23f, -13.42f),
+
+                    glm::vec3(12.32f, 1.23f, -13.55f),
+                    glm::vec3(12.34f, 1.23f, -13.75f),
+                    glm::vec3(12.36f, 1.23f, -13.95f),
+                    glm::vec3(12.38f, 1.23f, -14.15f),
+
+                    glm::vec3(12.1f, 1.23f, -13.55f),
+                    glm::vec3(11.9f, 1.23f, -13.56f),
+                    glm::vec3(11.7f, 1.23f, -13.57f),
+                    glm::vec3(11.5f, 1.23f, -13.58f),
+
+                    glm::vec3(12.11f, 1.23f, -13.75f),
+                    glm::vec3(11.91f, 1.23f, -13.76f),
+            };
+
     // shader configuration
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
+
+    blendingShader.use();
+    blendingShader.setInt("texture1", 0);
 
     // draw in wireframe
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -410,6 +474,8 @@ int main() {
         float yRowCoord = 0.0f;
         for (int i = 0; i < 9; ++i) {
             for (int j = 0; j < 30; ++j) {
+                if (i == 8 && j > 25)
+                    continue;
                 glm::mat4 corn = glm::mat4(1.0f);
                 corn = glm::translate(corn, programState->cornPosition + glm::vec3(float(j), yRowCoord, zRowCoord + j * 0.082f));
                 corn = glm::scale(corn, glm::vec3(programState->cornScale));
@@ -560,6 +626,23 @@ int main() {
         ourShader.setMat4("model", waterBowl);
         waterBowlModel.Draw(ourShader);
 
+        // sheep
+        glm::mat4 sheep = glm::mat4(1.0f);
+        sheep = glm::translate(sheep, programState->sheepPosition);
+        sheep = glm::scale(sheep, glm::vec3(programState->sheepScale));
+        sheep = glm::rotate(sheep, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+//        sheep = glm::rotate(sheep, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", sheep);
+        sheepModel.Draw(ourShader);
+
+        glm::mat4 sheep2 = glm::mat4(1.0f);
+        sheep2 = glm::translate(sheep2, programState->sheep2Position);
+        sheep2 = glm::scale(sheep2, glm::vec3(programState->sheepScale));
+//        sheep2 = glm::rotate(sheep2, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+//        sheep2 = glm::rotate(sheep2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", sheep2);
+        sheepModel.Draw(ourShader);
+
         // draw skybox
         glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
         skyboxShader.use();
@@ -573,6 +656,36 @@ int main() {
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
         glDepthFunc(GL_LESS); // set depth function back to default
+
+        // draw grass
+        blendingShader.use();
+        blendingShader.setVec3("dirLight.direction", -0.2f, -1.0f, 0.3f);
+        blendingShader.setVec3("dirLight.ambient",  0.1f, 0.1f, 0.1f);
+        blendingShader.setVec3("dirLight.diffuse", 0.25f, 0.25f, 0.25f);
+        blendingShader.setVec3("dirLight.specular", 0.3f, 0.3f, 0.3f);
+        blendingShader.setVec3("viewPosition", programState->camera.Position);
+
+        projection = glm::perspective(glm::radians(programState->camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        view = programState->camera.GetViewMatrix();
+        blendingShader.setMat4("projection", projection);
+        blendingShader.setMat4("view", view);
+        glBindVertexArray(transparentVAO);
+        glBindTexture(GL_TEXTURE_2D, transparentTexture);
+
+        for (auto i : vegetation)
+        {
+            float angle = 0.0f;
+            for (int j = 0; j < 12; ++j) {
+                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::translate(model, i);
+                model = glm::scale(model, glm::vec3(0.3f));
+                model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+                model = glm::translate(model, glm::vec3(-0.5f, 0.0f, 0.0f));
+                blendingShader.setMat4("model", model);
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+                angle += 30.0f;
+            }
+        }
 
         if (programState->ImGuiEnabled)
             DrawImGui(programState);
@@ -593,7 +706,10 @@ int main() {
 
     // deallocate
     glDeleteVertexArrays(1, &skyboxVAO);
-    glDeleteBuffers(1, &skyboxVAO);
+    glDeleteBuffers(1, &skyboxVBO);
+
+    glDeleteVertexArrays(1, &transparentVAO);
+    glDeleteBuffers(1, &transparentVBO);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
@@ -727,6 +843,43 @@ unsigned int loadCubemap(vector<std::string> faces)
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    return textureID;
+}
+
+unsigned int loadTexture(char const * path)
+{
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+
+    int width, height, nrComponents;
+    unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
+    if (data)
+    {
+        GLenum format;
+        if (nrComponents == 1)
+            format = GL_RED;
+        else if (nrComponents == 3)
+            format = GL_RGB;
+        else if (nrComponents == 4)
+            format = GL_RGBA;
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT); // for this tutorial: use GL_CLAMP_TO_EDGE to prevent semi-transparent borders. Due to interpolation it takes texels from next repeat
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        stbi_image_free(data);
+    }
+    else
+    {
+        std::cout << "Texture failed to load at path: " << path << std::endl;
+        stbi_image_free(data);
+    }
 
     return textureID;
 }
