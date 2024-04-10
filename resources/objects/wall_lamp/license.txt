@@ -1,0 +1,11 @@
+Model Information:
+* title:	Victorian Wall Lamp
+* source:	https://sketchfab.com/3d-models/victorian-wall-lamp-9db7292bcfbd4c0b8bb1b8e069a31aa6
+* author:	urbanmasque (https://sketchfab.com/urbanmasque)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Victorian Wall Lamp" (https://sketchfab.com/3d-models/victorian-wall-lamp-9db7292bcfbd4c0b8bb1b8e069a31aa6) by urbanmasque (https://sketchfab.com/urbanmasque) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
