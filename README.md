@@ -27,5 +27,7 @@ Teaching Assistant: [Marko Spasić](https://github.com/spaske00)
 `Space` - Camera Up <br>
 `Left Control` - Camera Down <br>
 `B` - Enable/Disable Bloom <br>
-`F1` - Enable/Disable ImGui <br>
 `Esc` - Exit <br>
+
+## Gallery
+![Scene gif](scene.gif)
