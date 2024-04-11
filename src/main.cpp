@@ -902,8 +902,7 @@ int main() {
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glBindVertexArray(0);
 
-        if (programState->ImGuiEnabled)
-            DrawImGui(programState);
+        DrawImGui(programState);
 
 
 
@@ -1013,7 +1012,7 @@ void DrawImGui(ProgramState *programState) {
 
 
 
-
+//    if (programState->ImGuiEnabled)
 //    {
 //        ImGui::Begin("Camera info");
 //        const Camera& c = programState->camera;
@@ -1054,7 +1053,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_F1 && action == GLFW_PRESS) {
         programState->ImGuiEnabled = !programState->ImGuiEnabled;
         if (programState->ImGuiEnabled) {
-            programState->CameraMouseMovementUpdateEnabled = false;
+//            programState->CameraMouseMovementUpdateEnabled = false;
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         } else {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
