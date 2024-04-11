@@ -206,7 +206,7 @@ int main() {
 
     // glfw window creation
     // --------------------
-    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Scene", NULL, NULL);
     if (window == NULL) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -226,9 +226,6 @@ int main() {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
-
-    // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-//    stbi_set_flip_vertically_on_load(true);
 
     programState = new ProgramState;
     programState->LoadFromFile("resources/program_state.txt");
@@ -623,16 +620,17 @@ int main() {
         glm::mat4 projection = glm::perspective(glm::radians(programState->camera.Zoom),
                                                 (float) SCR_WIDTH / (float) SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = programState->camera.GetViewMatrix();
+        glm::mat4 model = glm::mat4(1.0f);
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
 
         // render the loaded models
         // field
-        glm::mat4 field = glm::mat4(1.0f);
-        field = glm::translate(field, programState->fieldPosition); // translate it down so it's at the center of the scene
-        field = glm::scale(field, glm::vec3(programState->fieldScale));    // it's a bit too big for our scene, so scale it down
-        field = glm::rotate(field, glm::radians(272.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", field);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->fieldPosition); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(programState->fieldScale));    // it's a bit too big for our scene, so scale it down
+        model = glm::rotate(model, glm::radians(272.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", model);
         fieldModel.Draw(ourShader);
 
         // corn corn corn
@@ -642,11 +640,11 @@ int main() {
             for (int j = 0; j < 30; ++j) {
                 if (i == 8 && j > 25)
                     continue;
-                glm::mat4 corn = glm::mat4(1.0f);
-                corn = glm::translate(corn, programState->cornPosition + glm::vec3(float(j), yRowCoord, zRowCoord + j * 0.082f));
-                corn = glm::scale(corn, glm::vec3(programState->cornScale));
-                corn = glm::rotate(corn, glm::radians(275.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-                ourShader.setMat4("model", corn);
+                model = glm::mat4(1.0f);
+                model = glm::translate(model, programState->cornPosition + glm::vec3(float(j), yRowCoord, zRowCoord + j * 0.082f));
+                model = glm::scale(model, glm::vec3(programState->cornScale));
+                model = glm::rotate(model, glm::radians(275.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+                ourShader.setMat4("model", model);
                 cornModel.Draw(ourShader);
             }
             zRowCoord -= 1.3f;
@@ -654,173 +652,171 @@ int main() {
         }
 
         // hay bale
-        glm::mat4 hay = glm::mat4(1.0f);
-        hay = glm::translate(hay, programState->hayPosition);
-        hay = glm::scale(hay, glm::vec3(programState->hayScale));
-        hay = glm::rotate(hay, glm::radians(60.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        hay = glm::rotate(hay, glm::radians(-30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ourShader.setMat4("model", hay);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->hayPosition);
+        model = glm::scale(model, glm::vec3(programState->hayScale));
+        model = glm::rotate(model, glm::radians(60.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(-30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", model);
         hayModel.Draw(ourShader);
 
-        glm::mat4 hay2 = glm::mat4(1.0f);
-        hay2 = glm::translate(hay2, programState->hay2Position);
-        hay2 = glm::scale(hay2, glm::vec3(programState->hayScale));
-        hay2 = glm::rotate(hay2, glm::radians(33.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ourShader.setMat4("model", hay2);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->hay2Position);
+        model = glm::scale(model, glm::vec3(programState->hayScale));
+        model = glm::rotate(model, glm::radians(33.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", model);
         hayModel.Draw(ourShader);
 
-        glm::mat4 hay3 = glm::mat4(1.0f);
-        hay3 = glm::translate(hay3, programState->hay3Position);
-        hay3 = glm::scale(hay3, glm::vec3(programState->hayScale));
-        hay3 = glm::rotate(hay3, glm::radians(-37.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ourShader.setMat4("model", hay3);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->hay3Position);
+        model = glm::scale(model, glm::vec3(programState->hayScale));
+        model = glm::rotate(model, glm::radians(-37.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", model);
         hayModel.Draw(ourShader);
 
         // tractor
-        glm::mat4 tractor = glm::mat4(1.0f);
-        tractor = glm::translate(tractor, programState->tractorPosition);
-        tractor = glm::scale(tractor, glm::vec3(programState->tractorScale));
-        tractor = glm::rotate(tractor, glm::radians(-6.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ourShader.setMat4("model", tractor);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->tractorPosition);
+        model = glm::scale(model, glm::vec3(programState->tractorScale));
+        model = glm::rotate(model, glm::radians(-6.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", model);
         tractorModel.Draw(ourShader);
 
         // barn
-        glm::mat4 cabin = glm::mat4(1.0f);
-        cabin = glm::translate(cabin, programState->cabinPosition);
-        cabin = glm::scale(cabin, glm::vec3(programState->cabinScale));
-        cabin = glm::rotate(cabin, glm::radians(85.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ourShader.setMat4("model", cabin);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->cabinPosition);
+        model = glm::scale(model, glm::vec3(programState->cabinScale));
+        model = glm::rotate(model, glm::radians(85.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", model);
         cabinModel.Draw(ourShader);
 
         // hay pile
-        glm::mat4 hayPile = glm::mat4(1.0f);
-        hayPile = glm::translate(hayPile, programState->hayPilePosition);
-        hayPile = glm::scale(hayPile, glm::vec3(programState->hayPileScale));
-        hayPile = glm::rotate(hayPile, glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        hayPile = glm::rotate(hayPile, glm::radians(-10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        ourShader.setMat4("model", hayPile);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->hayPilePosition);
+        model = glm::scale(model, glm::vec3(programState->hayPileScale));
+        model = glm::rotate(model, glm::radians(-30.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(-10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", model);
         hayPileModel.Draw(ourShader);
 
         // fences
-        glm::mat4 fence = glm::mat4(1.0f);
-        fence = glm::translate(fence, programState->fencePosition);
-        fence = glm::scale(fence, glm::vec3(programState->fenceScale));
-        fence = glm::rotate(fence, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        fence = glm::rotate(fence, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", fence);
+        // 1
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->fencePosition);
+        model = glm::scale(model, glm::vec3(programState->fenceScale));
+        model = glm::rotate(model, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", model);
         fenceModel.Draw(ourShader);
-
-        glm::mat4 fence2 = glm::mat4(1.0f);
-        fence2 = glm::translate(fence2, programState->fence2Position);
-        fence2 = glm::scale(fence2, glm::vec3(programState->fenceScale));
-        fence2 = glm::rotate(fence2, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        fence2 = glm::rotate(fence2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", fence2);
+        // 2
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->fence2Position);
+        model = glm::scale(model, glm::vec3(programState->fenceScale));
+        model = glm::rotate(model, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", model);
         fenceModel.Draw(ourShader);
-
-        glm::mat4 fence3 = glm::mat4(1.0f);
-        fence3 = glm::translate(fence3, programState->fence3Position);
-        fence3 = glm::scale(fence3, glm::vec3(programState->fenceScale));
-        fence3 = glm::rotate(fence3, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        fence3 = glm::rotate(fence3, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", fence3);
+        // 3
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->fence3Position);
+        model = glm::scale(model, glm::vec3(programState->fenceScale));
+        model = glm::rotate(model, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", model);
         fenceModel.Draw(ourShader);
-
-        glm::mat4 fence4 = glm::mat4(1.0f);
-        fence4 = glm::translate(fence4, programState->fence4Position);
-        fence4 = glm::scale(fence4, glm::vec3(programState->fenceScale));
-        fence4 = glm::rotate(fence4, glm::radians(-25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        fence4 = glm::rotate(fence4, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", fence4);
+        // 4
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->fence4Position);
+        model = glm::scale(model, glm::vec3(programState->fenceScale));
+        model = glm::rotate(model, glm::radians(-25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", model);
         fenceModel.Draw(ourShader);
-
-        glm::mat4 fence5 = glm::mat4(1.0f);
-        fence5 = glm::translate(fence5, programState->fence5Position);
-        fence5 = glm::scale(fence5, glm::vec3(programState->fenceScale));
-        fence5 = glm::rotate(fence5, glm::radians(-25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        fence5 = glm::rotate(fence5, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", fence5);
+        // 5
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->fence5Position);
+        model = glm::scale(model, glm::vec3(programState->fenceScale));
+        model = glm::rotate(model, glm::radians(-25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", model);
         fenceModel.Draw(ourShader);
-
-        glm::mat4 fence6 = glm::mat4(1.0f);
-        fence6 = glm::translate(fence6, programState->fence6Position);
-        fence6 = glm::scale(fence6, glm::vec3(programState->fenceScale));
-        fence6 = glm::rotate(fence6, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        fence6 = glm::rotate(fence6, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", fence6);
+        // 6
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->fence6Position);
+        model = glm::scale(model, glm::vec3(programState->fenceScale));
+        model = glm::rotate(model, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", model);
         fenceModel.Draw(ourShader);
-
-        glm::mat4 fence7 = glm::mat4(1.0f);
-        fence7 = glm::translate(fence7, programState->fence7Position);
-        fence7 = glm::scale(fence7, glm::vec3(programState->fenceScale));
-        fence7 = glm::rotate(fence7, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        fence7 = glm::rotate(fence7, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", fence7);
+        // 7
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->fence7Position);
+        model = glm::scale(model, glm::vec3(programState->fenceScale));
+        model = glm::rotate(model, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", model);
         fenceModel.Draw(ourShader);
-
-        glm::mat4 fence8 = glm::mat4(1.0f);
-        fence8 = glm::translate(fence8, programState->fence8Position);
-        fence8 = glm::scale(fence8, glm::vec3(programState->fenceScale));
-        fence8 = glm::rotate(fence8, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        fence8 = glm::rotate(fence8, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", fence8);
+        // 8
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->fence8Position);
+        model = glm::scale(model, glm::vec3(programState->fenceScale));
+        model = glm::rotate(model, glm::radians(66.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", model);
         fenceModel.Draw(ourShader);
-
-        glm::mat4 fence9 = glm::mat4(1.0f);
-        fence9 = glm::translate(fence9, programState->fence9Position);
-        fence9 = glm::scale(fence9, glm::vec3(programState->fenceScale));
-        fence9 = glm::rotate(fence9, glm::radians(-25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        fence9 = glm::rotate(fence9, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", fence9);
+        // 9
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->fence9Position);
+        model = glm::scale(model, glm::vec3(programState->fenceScale));
+        model = glm::rotate(model, glm::radians(-25.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", model);
         fenceModel.Draw(ourShader);
 
         // gate
-        glm::mat4 gate = glm::mat4(1.0f);
-        gate = glm::translate(gate, programState->gatePosition);
-        gate = glm::scale(gate, glm::vec3(programState->gateScale));
-        gate = glm::rotate(gate, glm::radians(-2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        gate = glm::rotate(gate, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", gate);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->gatePosition);
+        model = glm::scale(model, glm::vec3(programState->gateScale));
+        model = glm::rotate(model, glm::radians(-2.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", model);
         gateModel.Draw(ourShader);
 
         // water bowl
-        glm::mat4 waterBowl = glm::mat4(1.0f);
-        waterBowl = glm::translate(waterBowl, programState->waterBowlPosition);
-        waterBowl = glm::scale(waterBowl, glm::vec3(programState->waterBowlScale));
-        waterBowl = glm::rotate(waterBowl, glm::radians(-93.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        waterBowl = glm::rotate(waterBowl, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", waterBowl);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->waterBowlPosition);
+        model = glm::scale(model, glm::vec3(programState->waterBowlScale));
+        model = glm::rotate(model, glm::radians(-93.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        ourShader.setMat4("model", model);
         waterBowlModel.Draw(ourShader);
 
         // sheep
-        glm::mat4 sheep = glm::mat4(1.0f);
-        sheep = glm::translate(sheep, programState->sheepPosition);
-        sheep = glm::scale(sheep, glm::vec3(programState->sheepScale));
-        sheep = glm::rotate(sheep, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-//        sheep = glm::rotate(sheep, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", sheep);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->sheepPosition);
+        model = glm::scale(model, glm::vec3(programState->sheepScale));
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        ourShader.setMat4("model", model);
         sheepModel.Draw(ourShader);
 
-        glm::mat4 sheep2 = glm::mat4(1.0f);
-        sheep2 = glm::translate(sheep2, programState->sheep2Position);
-        sheep2 = glm::scale(sheep2, glm::vec3(programState->sheepScale));
-//        sheep2 = glm::rotate(sheep2, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-//        sheep2 = glm::rotate(sheep2, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-        ourShader.setMat4("model", sheep2);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->sheep2Position);
+        model = glm::scale(model, glm::vec3(programState->sheepScale));
+        ourShader.setMat4("model", model);
         sheepModel.Draw(ourShader);
 
         // water tower
-        glm::mat4 waterTower = glm::mat4(1.0f);
-        waterTower = glm::translate(waterTower, programState->waterTowerPosition);
-        waterTower = glm::scale(waterTower, glm::vec3(programState->waterTowerScale));
-        ourShader.setMat4("model", waterTower);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->waterTowerPosition);
+        model = glm::scale(model, glm::vec3(programState->waterTowerScale));
+        ourShader.setMat4("model", model);
         waterTowerModel.Draw(ourShader);
 
         // wall lamp
-        glm::mat4 lamp = glm::mat4(1.0f);
-        lamp = glm::translate(lamp, programState->lampPosition);
-        lamp = glm::scale(lamp, glm::vec3(programState->lampScale));
-        ourShader.setMat4("model", lamp);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, programState->lampPosition);
+        model = glm::scale(model, glm::vec3(programState->lampScale));
+        ourShader.setMat4("model", model);
         lampModel.Draw(ourShader);
 
         // draw skybox
@@ -994,24 +990,7 @@ void DrawImGui(ProgramState *programState) {
     ImGui::NewFrame();
 
 
-    {
-        static float f = 0.0f;
-        ImGui::Begin("Hello window");
-        ImGui::Text("Hello text");
-        ImGui::SliderFloat("Float slider", &f, 0.0, 1.0);
-        ImGui::ColorEdit3("Background color", (float *) &programState->clearColor);
-        ImGui::DragFloat3("Field position", (float*)&programState->fieldPosition);
-        ImGui::DragFloat("Field scale", &programState->fieldScale, 0.05, 0.1, 4.0);
 
-        ImGui::DragFloat("pos X", &programState->pointLight.position.x, 0.05, -20.0, 20.0);
-        ImGui::DragFloat("pos Y", &programState->pointLight.position.y, 0.05, -20.0, 20.0);
-        ImGui::DragFloat("pos Z", &programState->pointLight.position.z, 0.05, -20.0, 20.0);
-
-        ImGui::DragFloat("amb X", &programState->pointLight.ambient.x, 0.05, -20.0, 20.0);
-        ImGui::DragFloat("amb Y", &programState->pointLight.ambient.y, 0.05, -20.0, 20.0);
-        ImGui::DragFloat("amb Z", &programState->pointLight.ambient.z, 0.05, -20.0, 20.0);
-        ImGui::End();
-    }
 
     {
         ImGui::Begin("Camera info");
