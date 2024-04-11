@@ -82,7 +82,7 @@ struct ProgramState {
     bool ImGuiEnabled = false;
     Camera camera;
     bool CameraMouseMovementUpdateEnabled = true;
-    bool bloomFlag = true;
+    bool bloomFlag = false;
 
     glm::vec3 fieldPosition = glm::vec3(0.0f);
     float fieldScale = 0.4f;
@@ -378,9 +378,9 @@ int main() {
     // Point light
     PointLight& pointLight = programState->pointLight;
     pointLight.position = glm::vec3(11.75f, 2.4f, -9.5f);
-    pointLight.ambient = glm::vec3(0.5f);
-    pointLight.diffuse = glm::vec3(3.0f);
-    pointLight.specular = glm::vec3(1.0f);
+    pointLight.ambient = glm::vec3(0.75f);
+    pointLight.diffuse = glm::vec3(4.5f);
+    pointLight.specular = glm::vec3(1.5f);
 
     pointLight.constant = 1.0f;
     pointLight.linear = 0.7f;
@@ -395,9 +395,9 @@ int main() {
 
     // Spotlight
     SpotLight& spotLight = programState->spotLight;
-    spotLight.ambient = glm::vec3(1.0, 0.9, 0.6);
-    spotLight.diffuse = glm::vec3(0.9, 0.8, 0.5);
-    spotLight.specular = glm::vec3(1.0, 0.9, 0.6);
+    spotLight.ambient = glm::vec3(1.5, 1.35, 0.9);
+    spotLight.diffuse = glm::vec3(1.35, 1.2, 0.75);
+    spotLight.specular = glm::vec3(1.5, 1.35, 0.9);
     spotLight.constant = 1.0f;
     spotLight.linear = 0.09f;
     spotLight.quadratic = 0.032f;
@@ -405,9 +405,9 @@ int main() {
     spotLight.outerCutOff = glm::cos(glm::radians(17.5f));
 
     SpotLight& spotLight1 = programState->spotLight1;
-    spotLight1.ambient = glm::vec3(1.0, 0.9, 0.6);
-    spotLight1.diffuse = glm::vec3(0.9, 0.8, 0.5);
-    spotLight1.specular = glm::vec3(1.0, 0.9, 0.6);
+    spotLight1.ambient = glm::vec3(1.5, 1.35, 0.9);
+    spotLight1.diffuse = glm::vec3(1.35, 1.2, 0.75);
+    spotLight1.specular = glm::vec3(1.5, 1.35, 0.9);
     spotLight1.constant = 1.0f;
     spotLight1.linear = 0.09f;
     spotLight1.quadratic = 0.032f;
@@ -852,7 +852,7 @@ int main() {
         {
             float angle = 0.0f;
             for (int j = 0; j < 12; ++j) {
-                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::mat4(1.0f);
                 model = glm::translate(model, i);
                 model = glm::scale(model, glm::vec3(0.3f));
                 model = glm::rotate(model, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -868,7 +868,7 @@ int main() {
         // 2. blur bright fragments with two-pass Gaussian Blur
         // ----------------------------------------------------
         bool horizontal = true, first_iteration = true;
-        unsigned int amount = 10;
+        unsigned int amount = 5;
         blurShader.use();
         for (unsigned int i = 0; i < amount; i++)
         {
