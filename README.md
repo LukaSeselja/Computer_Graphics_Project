@@ -1,5 +1,5 @@
 # Project description
-This project was created for the Computer Graphics course, as part of the studies at the Faculty of Mathematics, University of Belgrade.
+This project was created for the Computer Graphics course, as part of the studies at the Faculty of Mathematics, University of Belgrade. <br>
 Professor: [dr Vesna Marinković](https://poincare.matf.bg.ac.rs/~vesna.marinkovic/) <br>
 Teaching Assistant: [Marko Spasić](https://github.com/spaske00)
 
