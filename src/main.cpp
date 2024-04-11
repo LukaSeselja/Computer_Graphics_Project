@@ -189,6 +189,10 @@ ProgramState *programState;
 
 void DrawImGui(ProgramState *programState);
 
+unsigned int colorBuffers[2];
+unsigned int rboDepth;
+unsigned int pingpongColorbuffers[2];
+
 int main() {
     // glfw: initialize and configure
     // ------------------------------
@@ -389,7 +393,7 @@ int main() {
     // Directional light
     DirLight& dirLight = programState->dirLight;
     dirLight.direction = glm::vec3(-1.4f, -0.9f, -1.7f);
-    dirLight.ambient = glm::vec3(0.3f);
+    dirLight.ambient = glm::vec3(0.2f);
     dirLight.diffuse = glm::vec3(0.4f);
     dirLight.specular = glm::vec3(0.5f);
 
@@ -420,12 +424,12 @@ int main() {
     glGenFramebuffers(1, &hdrFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
     // create 2 floating point color buffers (1 for normal rendering, other for brightness threshold values)
-    unsigned int colorBuffers[2];
+
     glGenTextures(2, colorBuffers);
     for (unsigned int i = 0; i < 2; i++)
     {
         glBindTexture(GL_TEXTURE_2D, colorBuffers[i]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCR_WIDTH, SCR_HEIGHT - 65, 0, GL_RGBA, GL_FLOAT, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  // we clamp to the edge as the blur filter would otherwise sample repeated texture values!
@@ -434,7 +438,7 @@ int main() {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0);
     }
     // create depth buffer (renderbuffer)
-    unsigned int rboDepth;
+
     glGenRenderbuffers(1, &rboDepth);
     glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
@@ -449,7 +453,7 @@ int main() {
 
     // ping-pong-framebuffer for blurring
     unsigned int pingpongFBO[2];
-    unsigned int pingpongColorbuffers[2];
+
     glGenFramebuffers(2, pingpongFBO);
     glGenTextures(2, pingpongColorbuffers);
     for (unsigned int i = 0; i < 2; i++)
@@ -868,7 +872,7 @@ int main() {
         // 2. blur bright fragments with two-pass Gaussian Blur
         // ----------------------------------------------------
         bool horizontal = true, first_iteration = true;
-        unsigned int amount = 5;
+        unsigned int amount = 6;
         blurShader.use();
         for (unsigned int i = 0; i < amount; i++)
         {
@@ -951,11 +955,29 @@ void processInput(GLFWwindow *window) {
         programState->camera.ProcessKeyboard(DOWN, deltaTime);
 }
 
+void hdrResize(int width, int height) {
+    for (unsigned int i = 0; i < 2; i++) {
+        glBindTexture(GL_TEXTURE_2D, colorBuffers[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+    }
+    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
+}
+
+void bloomResize(int width, int height) {
+    for (unsigned int i = 0; i < 2; i++) {
+        glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
+    }
+}
+
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     // make sure the viewport matches the new window dimensions; note that width and
     // height will be significantly larger than specified on retina displays.
+    hdrResize(width, height);
+    bloomResize(width, height);
     glViewport(0, 0, width, height);
 }
 
@@ -992,15 +1014,15 @@ void DrawImGui(ProgramState *programState) {
 
 
 
-    {
-        ImGui::Begin("Camera info");
-        const Camera& c = programState->camera;
-        ImGui::Text("Camera position: (%f, %f, %f)", c.Position.x, c.Position.y, c.Position.z);
-        ImGui::Text("(Yaw, Pitch): (%f, %f)", c.Yaw, c.Pitch);
-        ImGui::Text("Camera front: (%f, %f, %f)", c.Front.x, c.Front.y, c.Front.z);
-        ImGui::Checkbox("Camera mouse update", &programState->CameraMouseMovementUpdateEnabled);
-        ImGui::End();
-    }
+//    {
+//        ImGui::Begin("Camera info");
+//        const Camera& c = programState->camera;
+//        ImGui::Text("Camera position: (%f, %f, %f)", c.Position.x, c.Position.y, c.Position.z);
+//        ImGui::Text("(Yaw, Pitch): (%f, %f)", c.Yaw, c.Pitch);
+//        ImGui::Text("Camera front: (%f, %f, %f)", c.Front.x, c.Front.y, c.Front.z);
+//        ImGui::Checkbox("Camera mouse update", &programState->CameraMouseMovementUpdateEnabled);
+//        ImGui::End();
+//    }
 
     // ovaj deo koda je pozajmljen od kolege Marka Moljkovića (mljkvc)
     // ---------------------------------------------------------------
