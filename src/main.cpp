@@ -82,7 +82,7 @@ struct ProgramState {
     bool ImGuiEnabled = false;
     Camera camera;
     bool CameraMouseMovementUpdateEnabled = true;
-    bool bloomFlag = false;
+    bool bloomFlag = true;
 
     glm::vec3 fieldPosition = glm::vec3(0.0f);
     float fieldScale = 0.4f;
@@ -383,8 +383,8 @@ int main() {
     PointLight& pointLight = programState->pointLight;
     pointLight.position = glm::vec3(11.75f, 2.4f, -9.5f);
     pointLight.ambient = glm::vec3(0.75f);
-    pointLight.diffuse = glm::vec3(4.5f);
-    pointLight.specular = glm::vec3(1.5f);
+    pointLight.diffuse = glm::vec3(5.5f);
+    pointLight.specular = glm::vec3(2.5f);
 
     pointLight.constant = 1.0f;
     pointLight.linear = 0.7f;
@@ -423,8 +423,8 @@ int main() {
     unsigned int hdrFBO;
     glGenFramebuffers(1, &hdrFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-    // create 2 floating point color buffers (1 for normal rendering, other for brightness threshold values)
 
+    // create 2 floating point color buffers (1 for normal rendering, other for brightness threshold values)
     glGenTextures(2, colorBuffers);
     for (unsigned int i = 0; i < 2; i++)
     {
@@ -437,8 +437,8 @@ int main() {
         // attach texture to framebuffer
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0);
     }
-    // create depth buffer (renderbuffer)
 
+    // create depth buffer (renderbuffer)
     glGenRenderbuffers(1, &rboDepth);
     glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
@@ -453,7 +453,6 @@ int main() {
 
     // ping-pong-framebuffer for blurring
     unsigned int pingpongFBO[2];
-
     glGenFramebuffers(2, pingpongFBO);
     glGenTextures(2, pingpongColorbuffers);
     for (unsigned int i = 0; i < 2; i++)
@@ -552,6 +551,13 @@ int main() {
     blendingShader.use();
     blendingShader.setInt("texture1", 0);
 
+    blurShader.use();
+    blurShader.setInt("image", 0);
+
+    bloomShader.use();
+    bloomShader.setInt("scene", 0);
+    bloomShader.setInt("bloomBlur", 1);
+
     // draw in wireframe
 //    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -571,7 +577,10 @@ int main() {
 
         // render
         // ------
-        glClearColor(programState->clearColor.r, programState->clearColor.g, programState->clearColor.b, 1.0f);
+//        glClearColor(programState->clearColor.r, programState->clearColor.g, programState->clearColor.b, 1.0f);
+//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // 1. render scene into floating point framebuffer
+        // -----------------------------------------------
         glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -872,7 +881,7 @@ int main() {
         // 2. blur bright fragments with two-pass Gaussian Blur
         // ----------------------------------------------------
         bool horizontal = true, first_iteration = true;
-        unsigned int amount = 6;
+        unsigned int amount = 10;
         blurShader.use();
         for (unsigned int i = 0; i < amount; i++)
         {
@@ -897,14 +906,14 @@ int main() {
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
         bloomShader.setInt("bloom", programState->bloomFlag);
-        bloomShader.setFloat("exposure", 0.2f);
+        bloomShader.setFloat("exposure", 0.5f);
         glBindVertexArray(quadVAO);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
         glBindVertexArray(0);
 
         DrawImGui(programState);
 
-
+        std::cout << "bloom: " << (programState->bloomFlag ? "on" : "off") << std::endl;
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------

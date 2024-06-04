@@ -1,5 +1,6 @@
 #version 330 core
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 BrightColor;
 
 struct PointLight {
     vec3 position;
@@ -126,5 +127,10 @@ void main()
     result += CalcDirectionalLight(dirLight, normal, viewDir);
     result += CalcSpotLight(spotLight, normal, FragPos, viewDir);
     result += CalcSpotLight(spotLight1, normal, FragPos, viewDir);
+    float brightness = dot(result, vec3(0.2126f, 0.7152f, 0.0722f));
+    if (brightness > 1.0)
+        BrightColor = vec4(result, 1.0);
+    else
+        BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
     FragColor = vec4(result, 1.0);
 }
